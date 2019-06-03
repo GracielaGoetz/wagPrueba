@@ -1,0 +1,212 @@
+<!Doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+      <meta http-equiv=”Expires” content=”0″>
+    	<meta http-equiv=”Last-Modified” content=”0″>
+    	<meta http-equiv=”Cache-Control” content=”no-cache”>
+    	<meta http-equiv=”Pragma” content=”no-cache”>
+   		<title>Wag</title>
+         <style type="text/css">
+         body {
+           padding-left: 38em;
+           
+           font-family: Georgia, "Times New Roman",
+                 Times, serif;
+           color: purple;
+           background-color: #d8da3d }
+         ul.navbar {
+           position: absolute;
+           top: 2em;
+           left: 1em;
+           width: 9em }
+         h4 {
+            padding-left: 3em;
+            text-align: center
+           font-family: Helvetica, Geneva, Arial,
+                 SunSans-Regular, sans-serif   
+              }
+         .button {
+
+            background-color: #2E64FE;
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            text-align: center;
+            font-size: 16px;
+            margin: 4px 2px;
+            opacity: 0.6;
+            transition: 0.3s;
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+
+            }
+
+         .button:hover {opacity: 1}
+         .text-box{
+             padding-left: 5em;
+         }
+         .img{
+
+             
+         }
+         .top{
+
+            padding-top: 2em;
+            padding-left: 5em;
+         }
+
+         </style>
+    	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	</head>
+	<body>
+      <div class="">
+		<img src="img/bigcloselogo.png">
+      </div>
+         <div>
+         	<form>
+               <h4>Ingrese número de documento</h4>
+               <div class="text-box">
+               <input type = "text" id = "id">
+               </div>
+               <h4>Ingrese nombre completo</h4>
+               <div class="text-box">
+         		<input type = "text" id = "nombre">
+               </div>
+               <h4>Ingrese apellidos</h4>
+               <div class="text-box">
+         		<input type = "text" id = "apellido">
+               </div>
+               <h4>Ingrese contraseña</h4>
+               <div class="text-box">
+         		<input type = "text" id = "contrasena">
+               </div>
+               <h4>¿Desea enseñar o registrarse como alumno?</h4>
+               <div class="text-box">
+         		<input type = "text" id = "rol">
+               </div>
+               <h4>Ingrese su correo electrónico</h4>
+               <div class="text-box">
+         		<input type = "text" id = "correo">
+               </div>
+         	</form>
+            <div class="top">
+         	<button id = "agregar" class="button">Registrarse</button>
+            </div>
+         </div>
+         <!--<div>
+         	<form>
+         		<input type = "text" id = "idA">
+         		<input type = "text" id = "nombreA">
+         		<input type = "text" id = "apellidoA"> 
+         		<input type = "text" id = "contrasenaA">
+         		<input type = "text" id = "rolA">
+         		<input type = "text" id = "correoA">
+         	</form>
+         	<button id = "actualizar">Actualizar</button>
+         </div>
+         <div>
+         	<form>
+         		<input type = "text" id = "borrador">
+         	</form>
+         	<button id = "borrar">Borrar</button>
+         </div>
+         <div>
+         	<form>
+         		<input type = "text" id = "validarNom">
+         		<input type = "text" id = "validarCon">
+         	</form>
+         	<button id = "saludo">Ingresar</button>
+         </div>
+         <div id = "saludar"></div>
+         <div class="container">
+         	<div class="row">
+         		<div class="col-md-12">
+         			<table class="table table-striped">
+         				<thead>
+         					<th>Nombre</th>
+         					<th>Apellido</th>
+         					<th>Rol</th>
+         				</thead>
+         				<tbody id = "content">
+         				</tbody>
+         			</table>
+         		</div>
+         	</div>
+         </div>-->
+         <script type="text/javascript">
+         	
+         	$(document).ready(function(){
+         		load();
+         		validar();
+         		agregar();
+         		actualizar();
+         		borrar();
+         	});
+         	function validar(){
+         		$("#saludo").click(function(){
+         			saludar($("#validarNom").val(), $("#validarCon").val());
+         		});
+         	}
+         	function saludar(nombre,contrasena){
+         		$.ajax({
+         			method: "GET",
+         			url: "/api/usuario/"+nombre+"/"+contrasena,
+         		}).done(function(datos){
+         			$("#saludar").text("Bienvenido: "+datos.nombre);
+         		});
+         	}
+         	function delet(id){
+         		$.ajax({
+         			method: "DELETE",
+         			url: "/api/usuario/"+id,
+         		});
+         	}
+         	function update(id, nombre, apellido, contrasena, rol, correo){
+         		$.ajax({
+                    method: "PUT",
+                    url: "/api/usuario/" + id,
+                    data: JSON.stringify({nombre: nombre, apellido: apellido, contrasena: contrasena, rol: rol, correo: correo})
+                });
+         	}
+         	function create(id, nombre, apellido, contrasena, rol, correo){
+         		$.post("/api/usuario", JSON.stringify({id: id, nombre: nombre, apellido: apellido, contrasena: contrasena, rol: rol, correo: correo}),function(){
+         			
+         		}, "json");
+         	}
+         	function load(){
+         		$.getJSON("/api/usuario", function(datos){
+         			$.each(datos , function(key, val){
+         				var cuenta;
+         				if(val.rol == 1){
+         					cuenta = "Alumno";
+         				}if(val.rol == 2){
+         					cuenta = "Profesor";
+         				}if(val.rol == 3){
+         					cuenta = "Administrador";
+         				}
+         				$("<tr><td>" + val.nombre + "</td><td>" + val.apellido + "</td><td>" + cuenta + "</td></tr>").appendTo("#content");
+         			});
+         		});
+         	}
+         	function agregar(){
+         		$("#agregar").click(function(){
+         			create($("#id").val(), $("#nombre").val(), $("#apellido").val(), $("#contrasena").val(), $("#rol").val(), $("#correo").val());
+         		});
+         	}
+         	function actualizar(){
+         		$("#actualizar").click(function(){
+         			update($("#idA").val(), $("#nombreA").val(), $("#apellidoA").val(), $("#contrasenaA").val(), $("#rolA").val(), $("#correoA").val())
+         		});
+         	}
+         	function borrar(){
+         		$("#borrar").click(function(){
+         			delet($("#borrador").val());
+         		});
+         	}-->
+         	
+         </script>
+	</body>
+</html>
